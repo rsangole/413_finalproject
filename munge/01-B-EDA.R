@@ -13,12 +13,11 @@ map_int(as_tibble(dengueTS), ~sum(is.na(.x)))
 #     dev.off()
 # }
 
-
 # How do the correlations look?
 dengueTS[complete.cases(dengueTS),] %>%
     cor() %>%
-    corrplot::corrplot(type = 'lower',order = 'hclust')
+    corrplot::corrplot(order = 'hclust', hclust.method = 'ward.D2', tl.pos = 'l', method = 'sq')
 
 densityplot(~reanalysis_relative_humidity_percent, groups = city, dengueDF, plot.points = T, cex=0.2, auto.key = T)
 densityplot(~reanalysis_min_air_temp_k, groups = city, dengueDF, plot.points = T, cex=0.2, auto.key = T)
-
+densityplot(~total_cases, groups = city, dengueDF, plot.points = T, cex=0.2, auto.key = T)

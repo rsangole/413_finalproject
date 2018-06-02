@@ -15,3 +15,5 @@ nnetTS <- xts::cbind.xts(dengueTS, lagTS, lag2TS)
 
 nnetTS <- nnetTS %>% zoo::na.approx()
 
+nnet::nnet(formula = total_cases~., data = as_tibble(nnetTS),
+           size = c(6,6), maxit = 1000)
