@@ -59,11 +59,21 @@ calc_TE(dengueDF.sj$reanalysis_sat_precip_amt_mm,
         4,
         3)
 calc_TE(
-    lag(dengueDF.sj$reanalysis_sat_precip_amt_mm, 4, default = 0)[-1:-4],
+    lag(dengueDF.sj$reanalysis_sat_precip_amt_mm, 2, default = 0)[-1:-4],
     dengueDF.sj$total_cases[-1:-4],
     4,
     3
 )
+
+map_dbl(1:1e2, ~calc_TE(
+    lag(dengueDF.sj$reanalysis_sat_precip_amt_mm, 2, default = 0)[-1:-2],
+    dengueDF.sj$total_cases[-1:-2], 4,3)) -> te_result_lag2
+histogram(~te_result_lag2,nint = 40)
+map_dbl(1:1e2, ~calc_TE(
+    lag(dengueDF.sj$reanalysis_sat_precip_amt_mm, 4, default = 0)[-1:-4],
+    dengueDF.sj$total_cases[-1:-4], 4,3)) -> te_result_lag4
+histogram(~te_result_lag4,nint = 40)
+
 
 #-------- Take aways
 # e seems to be good at 4, if k = 3
