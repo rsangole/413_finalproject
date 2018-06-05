@@ -1,0 +1,143 @@
+---
+title: "Homework 3"
+author: 'R Sangole'
+date: Jun 4, 2018
+fontsize: 11pt
+output:
+  pdf_document: 
+    df_print: kable
+    highlight: tango
+    toc: yes
+    toc_depth: 2
+---
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+load('../cache/dengueTS.sj.RData')
+library(tidyverse)
+library(forecast)
+library(lattice)
+library(zoo)
+```
+
+I've decided to use the time series in the final itself for the last homework. Specifically, I'm using the `reanalysis_avg_temp_k` for San Juan. This is what the data looks like:
+
+```{r out.width= '70%', fig.align='center'}
+x <- ts(dengueTS.sj$reanalysis_avg_temp_k)
+plot.zoo(x)
+```
+
+First, splitting the data into training & testing:
+```{r out.width= '70%', fig.align='center'}
+x.train <- ts(x[1:700], frequency = 52)
+plot.zoo(x.train, main = 'Training data')
+x.test <- ts(x[701:900], frequency = 52, start = c(14,25))
+plot.zoo(x.test, main = 'Testing data')
+xtest = ts(x.test, start = 14.46154, frequency = 52)
+```
+
+I'm running three models:
+
+* 1 - NNETAR
+* 2 - ARIMA
+* 3 - STLF
+
+# Model 1 - `NNETAR`
+
+The `nnetar` has a few parameters which can be tuned to minimized. I'm minimizing RMSE, while searching the grid for `p` (non-seasonal differences)  and `size` (number of hidden nodes in the 1st layer).
+
+This code finds the smallest value of RMSE. The smallest value is found for `size` = 41 and `p` = 1.
+
+```{r out.width= '70%', fig.align='center', cache=TRUE}
+# Model 1
+wk_num = dengueTS.sj$weekofyear
+wk_num.train = wk_num[1:700]
+wk_num.test = wk_num[701:900]
+
+size_ <- 10:50
+p_ <- 1:2
+grid <- expand.grid(size_,p_, NA)
+names(grid) <- c('size_','p_','test_out')
+for(i in 1:dim(grid)[1]){
+    X = grid[i, ]
+    nnetFit <- x.train %>%
+        forecast::nnetar(repeats = 10,size = X[[1]], p = X[[2]], P = 1, xreg = wk_num.train) %>%
+        forecast::forecast(h=200, xreg = wk_num.test)
+    test_RMSE <- accuracy(nnetFit, x = x.test)[2,2]
+    grid[as.numeric(rownames(X)),3] <- test_RMSE
+}
+xyplot(test_out~size_|p_, groups=p_, grid)
+```
+
+```{r out.width= '70%', fig.align='center'}
+nnetFit <- x.train %>%
+    forecast::nnetar(repeats = 10,size = 41, p = 1, P = 1, xreg = wk_num.train) %>%
+    forecast::forecast(h=200, xreg = wk_num.test)
+accuracy(nnetFit, x = ts(x.test,frequency = 52, start = c(14,25)))
+nnetFit %>%
+    autoplot() +
+    forecast::autolayer(xtest, alpha = 0.8)
+```
+
+# Model 2 - `Auto.Arima`
+
+This model is a standard arima model, with seasonal differences. The seasonality is 52 weeks. The decomposition shows a good fit for the seasonal extraction, and acceptable trend.
+
+```{r out.width= '70%', fig.align='center'}
+# Model 2
+xtest = ts(x.test, start = 14.46154, frequency = 52)
+par('mar'=c(1.2,3,1,1))
+stl(x.train, s.window = 'p') %>% plot
+```
+
+Non-differenced P/ACF show strong seasonality. Upon differencing, we can see that there is a remnant 52-week lag structure. PACF shows that p=2 seems to be required for a stationary series.
+
+```{r out.width= '70%', fig.align='center'}
+forecast::ggtsdisplay(x.train)
+forecast::ggtsdisplay(diff(x.train))
+```
+
+Fitting an auto arima model, we can see that a (2,0,1)(1,1,0) fits well with a 52-week lag structure for the seasonality.
+
+```{r out.width= '70%', fig.align='center'}
+arimaFit <- auto.arima(x.train)
+arimaFit
+```
+
+Forecasts fit quite well!
+
+```{r out.width= '70%', fig.align='center'}
+arimaFit %>%
+    forecast(h=200) %>%
+    accuracy(x = ts(x.test,frequency = 52, start = c(14,25)))
+arimaFit %>%
+    forecast(h=200) %>%
+    autoplot()+
+    forecast::autolayer(xtest,alpha=0.8)
+```
+
+# Model 3 - `STLF`
+
+The STLF is so easy to use...
+
+```{r out.width= '70%', fig.align='center'}
+# Model 3
+stlfFit <- x.train %>%
+    forecast::stlf(y = ., h = 200, s.window = 'periodic', robust = T)
+```
+
+And the model fits quite well!
+
+```{r out.width= '70%', fig.align='center'}
+stlfFit %>%
+    autoplot()+
+    forecast::autolayer(xtest,alpha=0.8)
+accuracy(stlfFit, xtest)
+```
+
+# Comparison of the models
+
+The models rank in this order:
+
+1. STLF  (RMSE = 0.66)
+1. ARIMA (RMSE = 0.73)
+1. NNAR  (RMSE = 0.77)
