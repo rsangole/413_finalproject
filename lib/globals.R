@@ -5,5 +5,6 @@ add.config(
 
 # Add project specific configuration that can be overridden from load.project()
 add.config(
-  apply.override = TRUE
+  apply.override = TRUE,
+  model_number = 2
 )

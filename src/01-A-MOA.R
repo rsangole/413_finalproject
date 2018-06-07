@@ -20,7 +20,7 @@ V <- 8
 # Length of parameter sequence
 L <- 4
 # Forecast horizon
-h <- 1
+h <- 4
 
 moa_ts <- cbind(moa_ts, moa_ts[, 'total_cases'])
 colnames(moa_ts) <- c(colnames(moa_ts[, 1:2]), 'total_cases_original')
@@ -32,42 +32,35 @@ last_target_index <- length(week_index) - h
 last_target_date <- week_index[last_target_index]
 # itx <- iter(first_target_index:last_target_index)
 for (now_index in first_target_index:last_target_index) {
+    cat('\nProcessing index',now_index,'Max:', last_target_index,'PC:',round((now_index-first_target_index)/(last_target_index-first_target_index)*100,1),'%')
     t_now <- week_index[now_index]
     t_now_minus_L = week_index[now_index - L + 1]
     target_sequence <- moa_ts[paste0(t_now_minus_L, '/', t_now)]
 
-    moa_search_ts <-
-        moa_ts[paste0('/', t_now_minus_L - 1)]
-    search_index <-
-        index(moa_search_ts)
-    result_length <-
-        length(search_index) - (L + h)
+    moa_search_ts <- moa_ts[paste0('/', t_now_minus_L - 1)]
+    search_index <- index(moa_search_ts)
+    result_length <- length(search_index) - (L + h)
     result_matrix <-
         matrix(nrow = result_length,
                ncol = 3,
                dimnames = list(NULL, c('i_val', 'euc_dist', 'h')))
     for (i in 1:result_length) {
         search_from_date <- search_index[i]
-        search_end_date <-
-            search_index[i + L - 1]
-        search_sequence <-
-            moa_search_ts[paste0(search_from_date, '/', search_end_date)]
-        dist <- sum((rowSums((
-            coredata(search_sequence) - target_sequence
-        ) ^ 2)) ^ 0.5)
+        search_end_date <- search_index[i + L - 1]
+        search_sequence <- moa_search_ts[paste0(search_from_date, '/', search_end_date)]
+        dist <- mean((rowSums((coredata(search_sequence[,1:2]) - target_sequence[,1:2]) ^ 2)) ^ 0.5)
         h_date <- search_index[i + L - 1 + h]
         h_vals <- moa_search_ts[h_date, 'total_cases'][[1]]
         result_matrix[i,] <- c(i, dist, h_vals)
     }
-    result_subset <-
-        result_matrix[order(result_matrix[, 'euc_dist']), ][1:V, ]
+    result_subset <- result_matrix[order(result_matrix[, 'euc_dist']), ][1:V, ]
     h_hat <- mean(result_subset[, 'h'])
     h_actual <- moa_ts[now_index + h, 'total_cases'][[1]]
     moa_ts[now_index + h, 'total_cases'] <- h_hat
     # c(as.character(week_index[now_index + h]), h_actual, h_hat)
 }
 
-resultTS <- moa_ts[first_target_index:last_target_index, c(1, 3)]
+resultTS <- moa_ts[, c(1, 3)]
 plot.xts(resultTS, legend.loc = 'topright')
 
 master_result %<>%
@@ -120,10 +113,14 @@ V <- 8
 # Length of parameter sequence
 L <- 4
 # Forecast horizon
-h <- 1
+h <- 5
+# Overlap points
+ov <- 52 # 1 year
+
+total_cases_actuals <- moa_ts$total_cases
 
 week_index <- index(moa_ts)
-first_target_index <- which.max(week_index == test_start_date) - h
+first_target_index <- which.max(week_index == test_start_date) - h - ov
 last_target_index <- length(week_index) - h
 last_target_date <- week_index[last_target_index]
 for (now_index in first_target_index:last_target_index) {
@@ -155,6 +152,8 @@ for (now_index in first_target_index:last_target_index) {
     h_hat <- mean(result_subset[, 'h'])
     moa_ts[now_index + h, 'total_cases'] <- h_hat
 }
+plot.xts(moa_ts[,'total_cases'],subset = '2006/',legend.loc = 'topright',major.ticks = 'years',grid.ticks.on = 'years')
+lines(total_cases_actuals, on=TRUE, col='red')
 plot.xts(moa_ts[paste0(test_start_date,'/')],legend.loc = 'topright', multi.panel = 3)
 test_result_sj <- moa_ts
 
