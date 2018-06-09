@@ -1,4 +1,5 @@
 if(config$model_number == 1){
+    cat('\nRunning Model 1')
 
     dengueFeatures$week_start_date <- as.Date(dengueFeatures$week_start_date)
 
