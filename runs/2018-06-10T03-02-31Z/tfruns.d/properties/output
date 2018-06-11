@@ -1,0 +1,230 @@
+
+> # data <- data.matrix(data[,-1])
+> data <- dengueDF.sj %>% arrange(week_start_date) %>% select(-year,-week_start_date)
+
+> train_data <- data[(1:nrow(data)*0.7),]
+
+> mean <- apply(train_data, 2, mean)
+
+> std <- apply(train_data, 2, sd)
+
+> data <- scale(data, center = mean, scale = std)
+
+> generator <- function(data, lookback, delay, min_index, max_index,
++                       shuffle = FALSE, batch_size = 128, step = 1) {
++     if ( .... [TRUNCATED] 
+
+> lookback <- 1
+
+> step <- 1
+
+> delay <- 1
+
+> batch_size <- 1
+
+> train_gen <- generator(
++     data,
++     lookback = lookback,
++     delay = delay,
++     min_index = 1,
++     max_index = 550,
++     shuffle = FALS .... [TRUNCATED] 
+
+> head(data); train_gen()
+     weekofyear    ndvi_ne   ndvi_nw    ndvi_se    ndvi_sw precipitation_amt_mm
+[1,] -0.5978355  0.4049784 0.1054374  0.3160629  0.1827910         -0.532770957
+[2,] -0.5304971  0.9143911 0.5745327 -0.3315854 -0.2104282         -0.280002829
+[3,] -0.4631587 -0.5680752 0.9501958 -0.4240387  0.0624355          0.004847409
+[4,] -0.3958203  0.4699560 1.8298258  0.8372800  1.2181031         -0.461315352
+[5,] -0.3284818  1.1976375 2.0388544  1.2611353  1.4216209         -0.651863633
+[6,] -0.2611434  1.4868073 0.9731723  1.3169666  0.2561045         -0.601796100
+     reanalysis_precip_amt_kg_per_m2 reanalysis_relative_humidity_percent
+[1,]                    9.268423e-05                           -1.6642160
+[2,]                   -3.929512e-01                           -0.4925697
+[3,]                   -1.648404e-01                            0.8785323
+[4,]                   -5.058884e-01                            0.3763385
+[5,]                   -5.534115e-01                            0.4122991
+[6,]                   -1.539380e-01                            0.2458768
+     reanalysis_sat_precip_amt_mm reanalysis_specific_humidity_g_per_kg reanalysis_tdtr_k
+[1,]                 -0.534049081                           -1.62557530        0.40229421
+[2,]                 -0.281743756                           -0.74604526       -0.13015401
+[3,]                  0.002584936                            0.20831874       -0.27805629
+[4,]                 -0.462724306                            0.09468198       -0.01183218
+[5,]                 -0.652923705                            0.44205939        1.20096654
+[6,]                 -0.602947843                            0.44390715       -0.69218269
+     station_avg_temp_c station_diur_temp_rng_c station_max_temp_c station_min_temp_c
+[1,]         -1.1935637              0.05273461        -1.42876272         -1.7655284
+[2,]         -0.2618076             -0.58649243        -0.02236631         -0.2813879
+[3,]         -0.2618076             -0.44828118         0.28337204          0.1233778
+[4,]          0.2930584             -0.10275304         0.95599640          0.4606824
+[5,]          1.3713828              3.04155296         1.99550679          0.8654480
+[6,]          0.7641710              0.10456383         1.62862077          0.8654480
+     station_precip_mm reanalysis_air_temp_c reanalysis_avg_temp_c reanalysis_dew_point_temp_c
+[1,]        -0.3232962           -1.24298539           -1.21316293                  -1.7080104
+[2,]        -0.5794526           -0.70048889           -0.60676015                  -0.7249596
+[3,]         0.5559435           -0.21624705           -0.22930536                   0.2233737
+[4,]        -0.7386850           -0.04148308            0.07389603                   0.1438891
+[5,]        -0.6763767            0.40999052            0.45135082                   0.4709637
+[6,]         0.4763273            0.50465433            0.53797979                   0.4901496
+     reanalysis_max_air_temp_c reanalysis_min_air_temp_c total_cases
+[1,]                -1.2215033               -1.05085194  -0.6161365
+[2,]                -0.3052199               -0.65276971  -0.5988604
+[3,]                -0.6384139                0.06377831  -0.6161365
+[4,]                 0.1112725               -0.17507103  -0.6334126
+[5,]                 0.5277650                0.22301120  -0.5815844
+[6,]                 0.9442574                0.70070988  -0.6506886
+[[1]]
+, , 1
+
+           [,1]
+[1,] -0.5978355
+
+, , 2
+
+          [,1]
+[1,] 0.4049784
+
+, , 3
+
+          [,1]
+[1,] 0.1054374
+
+, , 4
+
+          [,1]
+[1,] 0.3160629
+
+, , 5
+
+         [,1]
+[1,] 0.182791
+
+, , 6
+
+          [,1]
+[1,] -0.532771
+
+, , 7
+
+             [,1]
+[1,] 9.268423e-05
+
+, , 8
+
+          [,1]
+[1,] -1.664216
+
+, , 9
+
+           [,1]
+[1,] -0.5340491
+
+, , 10
+
+          [,1]
+[1,] -1.625575
+
+, , 11
+
+          [,1]
+[1,] 0.4022942
+
+, , 12
+
+          [,1]
+[1,] -1.193564
+
+, , 13
+
+           [,1]
+[1,] 0.05273461
+
+, , 14
+
+          [,1]
+[1,] -1.428763
+
+, , 15
+
+          [,1]
+[1,] -1.765528
+
+, , 16
+
+           [,1]
+[1,] -0.3232962
+
+, , 17
+
+          [,1]
+[1,] -1.242985
+
+, , 18
+
+          [,1]
+[1,] -1.213163
+
+, , 19
+
+         [,1]
+[1,] -1.70801
+
+, , 20
+
+          [,1]
+[1,] -1.221503
+
+, , 21
+
+          [,1]
+[1,] -1.050852
+
+
+[[2]]
+[1] -0.6161365
+
+
+> val_gen = generator(
++     data,
++     lookback = lookback,
++     delay = delay,
++     min_index = 551,
++     max_index = 700,
++     step = step,
++  .... [TRUNCATED] 
+
+> test_gen <- generator(
++     data,
++     lookback = lookback,
++     delay = delay,
++     min_index = 701,
++     max_index = NULL,
++     step = step, .... [TRUNCATED] 
+
+> # How many steps to draw from val_gen in order to see the entire validation set
+> val_steps <- (701 - 551 - lookback) / batch_size
+
+> val_steps
+[1] 149
+
+> # How many steps to draw from test_gen in order to see the entire test set
+> test_steps <- (nrow(data) - 701 - lookback) / batch_size
+
+> test_steps
+[1] 234
+
+> model <- keras_model_sequential() %>%
++     layer_gru(units = 32,
++               input_shape = list(NULL, (dim(data)[[-1]]-1)),
++               dro .... [TRUNCATED] 
+
+> model %>% compile(
++     optimizer = optimizer_rmsprop(),
++     loss = "mae"
++ )
+
+> # tensorboard("logs/run_c", reload_interval = 10)
+> history <- model %>% fit_generator(
++     train_gen,
++     steps_per_epoch = 200,
++     epochs = .... [TRUNCATED] 

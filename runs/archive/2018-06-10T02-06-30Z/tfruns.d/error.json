@@ -1,0 +1,4 @@
+{
+  "message": "could not find function \"keras_model_sequential\"",
+  "traceback": ["eval(lhs, parent, parent)", "eval(lhs, parent, parent)", "keras_model_sequential() %>% layer_gru(units = 50, input_shape = list(NULL, \n    (dim(data)[[-1]] - 1)), dropout = 0.2, recurrent_dropout = 0.2) %>% \n    layer_dense(units = 1)", "eval(ei, envir)", "eval(ei, envir)", "tfruns::training_run(\"src/03-B-RNN.R\")"]
+}

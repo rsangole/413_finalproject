@@ -1,0 +1,4 @@
+{
+  "message": "object of type 'closure' is not subsettable",
+  "traceback": ["is.data.frame(frame)", "data.matrix(data[, -1])", "eval(ei, envir)", "eval(ei, envir)", "tfruns::training_run(\"src/03-B-RNN.R\")"]
+}

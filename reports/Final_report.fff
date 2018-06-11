@@ -1,0 +1,54 @@
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+
+\centering
+\includegraphics{Final_report_files/figure-latex/unnamed-chunk-1-1.pdf}
+\caption{}
+\end{figure*}
+\efloatseparator
+ 
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+
+\centering
+\includegraphics[width=0.70000\textwidth]{../graphs/ndvi_ne.png}
+\caption{NDVI NE Region}
+\end{figure*}
+\efloatseparator
+ 
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+
+\centering
+\includegraphics[width=0.70000\textwidth]{../graphs/reanalysis_specific_humidity_g_per_kg.png}
+\caption{Specific Humidity}
+\end{figure*}
+\efloatseparator
+ 
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+
+\centering
+\includegraphics[width=0.70000\textwidth]{../graphs/total_cases.png}
+\caption{Total cases}
+\end{figure*}
+\efloatseparator
+ 
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+
+\centering
+\includegraphics[width=0.70000\textwidth]{../graphs/sj_corplot.png}
+\caption{SJ Corrplot}
+\end{figure*}
+\efloatseparator
+ 
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+
+\centering
+\includegraphics[width=0.70000\textwidth]{../graphs/iq_corplot.png}
+\caption{IQ Corrplot}
+\end{figure*}
+\efloatseparator
+ 

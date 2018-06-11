@@ -1,0 +1,78 @@
+
+> # data <- data.matrix(data[,-1])
+> data <- dengueDF.sj %>% arrange(week_start_date) %>% select(-year,-week_start_date)
+
+> train_data <- data[(1:nrow(data)*0.7),]
+
+> mean <- apply(train_data, 2, mean)
+
+> std <- apply(train_data, 2, sd)
+
+> data <- scale(data, center = mean, scale = std)
+
+> generator <- function(data, lookback, delay, min_index, max_index,
++                       shuffle = FALSE, batch_size = 128, step = 1) {
++     if ( .... [TRUNCATED] 
+
+> lookback <- 10
+
+> step <- 1
+
+> delay <- 1
+
+> batch_size <- 1
+
+> train_gen <- generator(
++     data,
++     lookback = lookback,
++     delay = delay,
++     min_index = 1,
++     max_index = 550,
++     shuffle = FALS .... [TRUNCATED] 
+
+> # head(data); train_gen()
+> 
+> val_gen = generator(
++     data,
++     lookback = lookback,
++     delay = delay,
++     min_index = 551,
++     max_ind .... [TRUNCATED] 
+
+> test_gen <- generator(
++     data,
++     lookback = lookback,
++     delay = delay,
++     min_index = 701,
++     max_index = NULL,
++     step = step, .... [TRUNCATED] 
+
+> # How many steps to draw from val_gen in order to see the entire validation set
+> val_steps <- (701 - 551 - lookback) / batch_size
+
+> val_steps
+[1] 140
+
+> # How many steps to draw from test_gen in order to see the entire test set
+> test_steps <- (nrow(data) - 701 - lookback) / batch_size
+
+> test_steps
+[1] 225
+
+> model <- keras_model_sequential() %>%
++     layer_gru(units = 10,
++               input_shape = list(NULL, (dim(data)[[-1]]-1)),
++               dro .... [TRUNCATED] 
+
+> model %>% compile(
++     optimizer = optimizer_rmsprop(),
++     loss = "mae"
++ )
+
+> # tensorboard("logs/run_c", reload_interval = 10)
+> history <- model %>% fit_generator(
++     train_gen,
++     steps_per_epoch = 200,
++     epochs = .... [TRUNCATED] 
+
+> # plot(history)
